@@ -52,28 +52,41 @@ class ArticleController
                 
     }
 
-    public function getId()
-    {
-        if(!isset($_GET['id'])){
-            echo "No id found";
-        }
+    // public function getId()
+    // {
+    //     if(!isset($_GET['id'])){
+    //         echo "No id found";
+    //     }
 
-        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id = :id");
-        $stmt->execute(array(":id"=> $_GET['id']));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $id = $row['id'];
+    //     $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id = :id");
+    //     $stmt->execute(array(":id"=> $_GET['id']));
+    //     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     $id = $row['id'];
 
-        return $id;
+    //     return $id;
 
-    }
+    // }
 
     public function nextId($id)
     {
-        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id > $id ORDER BY id");
+        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id > $id ORDER BY id LIMIT 1");
         $stmt->execute();
         $next = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
         return $next;
-        require 'View/articles/show.php';
+        //require 'View/articles/show.php';
+    }
+
+    public function previousId($id)
+    {
+      
+        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id <= :id ORDER BY id LIMIT 1");
+        $stmt->execute(array(":id"=>$id));
+        $previous = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        if($previous == 1){
+            echo "This is the first one";
+        }      
+        return $previous;
+        //require 'View/articles/show.php';
     }
 }
 
