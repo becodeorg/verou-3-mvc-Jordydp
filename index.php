@@ -36,8 +36,8 @@ switch ($page) {
         (new ArticleController($databaseManager))->index();
         break;
     case 'articles-show':
-        // TODO: detail page
-        echo "aap";
+        // detail page
+        
         (new ArticleController($databaseManager	))->show();
         break;
     case 'home':

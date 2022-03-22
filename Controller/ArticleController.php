@@ -48,8 +48,32 @@ class ArticleController
         $stmt = $this->databaseManager->connection->query($sql,PDO::FETCH_ASSOC);
         $article = $stmt->fetch(PDO::FETCH_ASSOC);
         $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id']);
-        var_dump($article);
         require 'View/articles/show.php';
                 
     }
+
+    public function getId()
+    {
+        if(!isset($_GET['id'])){
+            echo "No id found";
+        }
+
+        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id = :id");
+        $stmt->execute(array(":id"=> $_GET['id']));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id = $row['id'];
+
+        return $id;
+
+    }
+
+    public function nextId($id)
+    {
+        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id > $id ORDER BY id");
+        $stmt->execute();
+        $next = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        return $next;
+        require 'View/articles/show.php';
+    }
 }
+
