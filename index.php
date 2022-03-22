@@ -37,6 +37,9 @@ switch ($page) {
         break;
     case 'articles-show':
         // TODO: detail page
+        echo "aap";
+        (new ArticleController($databaseManager	))->show();
+        break;
     case 'home':
     default:
         (new HomepageController())->index();
