@@ -3,7 +3,19 @@
 <?php
 //$next = $article->nextId($article->id); // Use any data loaded in the controller here 
 $next = $this->nextId($article->id);
-$previous = $this->previousId($article->id);?>
+if($article->id == "1")
+{
+    $previous = $this->lastId();
+} else {
+    $previous = $this->previousId($article->id);
+}
+
+echo "<pre>";
+var_dump($previous);
+echo "</pre>";
+;?>
+
+
 
 <section>
     <h1><?= $article->title ?></h1>

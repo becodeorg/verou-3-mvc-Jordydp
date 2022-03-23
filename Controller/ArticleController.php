@@ -44,48 +44,47 @@ class ArticleController
     public function show()
     {
         //this can be used for a detail page
-        $sql = "SELECT * FROM articles WHERE id = {$_GET['id']}";
-        $stmt = $this->databaseManager->connection->query($sql,PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM articles WHERE id ={$_GET['id']}";
+        $stmt = $this->databaseManager->connection->query($sql);
         $article = $stmt->fetch(PDO::FETCH_ASSOC);
         $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id']);
         require 'View/articles/show.php';
                 
     }
 
-    // public function getId()
-    // {
-    //     if(!isset($_GET['id'])){
-    //         echo "No id found";
-    //     }
-
-    //     $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id = :id");
-    //     $stmt->execute(array(":id"=> $_GET['id']));
-    //     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    //     $id = $row['id'];
-
-    //     return $id;
-
-    // }
-
     public function nextId($id)
     {
-        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id > $id ORDER BY id LIMIT 1");
-        $stmt->execute();
-        $next = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        $sql = "SELECT id From articles WHERE id > :id ORDER BY id LIMIT 1";
+        $stmt = $this->databaseManager->connection->prepare($sql);
+        $stmt->execute(array(":id"=>$id));
+        $next = $stmt->fetch(PDO::FETCH_ASSOC)['id'] ?? 'default';
         return $next;
         //require 'View/articles/show.php';
     }
 
+    public function lastId()
+    {
+        echo "aap";
+        $sql = "SELECT MAX(id) FROM articles";
+        $stmt = $this->databaseManager->connection->prepare($sql);
+        $stmt->execute();
+        $previous = $stmt->fetch(PDO::FETCH_ASSOC)["MAX(id)"];
+
+        return $previous;
+    }
+
     public function previousId($id)
     {
-      
-        $stmt = $this->databaseManager->connection->prepare("SELECT id From articles WHERE id <= :id ORDER BY id LIMIT 1");
-        $stmt->execute(array(":id"=>$id));
-        $previous = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
-        if($previous == 1){
-            echo "This is the first one";
-        }      
-        return $previous;
+        
+            $sql = "SELECT id From articles WHERE id < :id ORDER BY id DESC limit 1";
+            $stmt = $this->databaseManager->connection->prepare($sql);
+            $stmt->execute(array(":id"=>$id));
+            $previous = $stmt->fetch(PDO::FETCH_ASSOC)['id'] ?? 'default';
+
+    
+            return $previous;
+              
+    
         //require 'View/articles/show.php';
     }
 }
