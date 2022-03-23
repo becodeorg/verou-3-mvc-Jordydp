@@ -82,9 +82,7 @@ class ArticleController
             $previous = $stmt->fetch(PDO::FETCH_ASSOC)['id'] ?? 'default';
 
     
-            return $previous;
-              
-    
+            return $previous;    
         //require 'View/articles/show.php';
     }
 }
