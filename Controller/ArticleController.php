@@ -35,7 +35,7 @@ class ArticleController
         $articles = [];
         foreach ($rawArticles as $rawArticle) {
             // We are converting an article from a "dumb" array to a much more flexible class
-            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['id']);
+            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['id'], $rawArticle['img_url']);
         }
 
         return $articles;
@@ -47,7 +47,7 @@ class ArticleController
         $sql = "SELECT * FROM articles WHERE id ={$_GET['id']}";
         $stmt = $this->databaseManager->connection->query($sql);
         $article = $stmt->fetch(PDO::FETCH_ASSOC);
-        $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id']);
+        $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id'], $article['img_url']);
         require 'View/articles/show.php';
                 
     }
@@ -64,7 +64,7 @@ class ArticleController
 
     public function lastId()
     {
-        echo "aap";
+        
         $sql = "SELECT MAX(id) FROM articles";
         $stmt = $this->databaseManager->connection->prepare($sql);
         $stmt->execute();

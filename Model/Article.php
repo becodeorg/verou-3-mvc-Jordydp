@@ -8,13 +8,15 @@ class Article
     public ?string $description;
     public ?string $publishDate;
     public ?string $id;
+    public ?string $image;
 
-    public function __construct(string $title, ?string $description, ?string $publishDate, ?string $id)
+    public function __construct(string $title, ?string $description, ?string $publishDate, ?string $id, ?string $image)
     {
         $this->title = $title;
         $this->description = $description;
         $this->publishDate = $publishDate;
         $this->id = $id;
+        $this->image = $image;
     }
     // format = 'D-M-Y = weekday- month -year  example= friday januari 1992 || d-m-Y = 10-01-1992
     public function formatPublishDate($format = 'd-m-Y')
