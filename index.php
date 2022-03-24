@@ -40,6 +40,9 @@ switch ($page) {
         
         (new ArticleController($databaseManager	))->show();
         break;
+    case 'articles-author':
+        (new ArticleController($databaseManager))->showAuthor($_GET['author']);
+        break;
     case 'home':
     default:
         (new HomepageController())->index();

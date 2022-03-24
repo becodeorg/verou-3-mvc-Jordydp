@@ -35,7 +35,7 @@ class ArticleController
         $articles = [];
         foreach ($rawArticles as $rawArticle) {
             // We are converting an article from a "dumb" array to a much more flexible class
-            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['id'], $rawArticle['img_url']);
+            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['id'], $rawArticle['img_url'], $rawArticle['author']);
         }
 
         return $articles;
@@ -44,10 +44,12 @@ class ArticleController
     public function show()
     {
         //this can be used for a detail page
-        $sql = "SELECT * FROM articles WHERE id ={$_GET['id']}";
-        $stmt = $this->databaseManager->connection->query($sql);
-        $article = $stmt->fetch(PDO::FETCH_ASSOC);
-        $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id'], $article['img_url']);
+        $sql = "SELECT * FROM articles WHERE id = :id";
+        $stmt = $this->databaseManager->connection->prepare($sql);
+        $stmt->bindParam(':id', $_GET['id']);
+        $stmt->execute();
+        $article = $stmt->fetch();
+        $article = new Article($article['title'],$article['description'], $article['publish_date'], $article['id'], $article['img_url'], $article['author']);
         require 'View/articles/show.php';
                 
     }
@@ -56,7 +58,8 @@ class ArticleController
     {
         $sql = "SELECT id From articles WHERE id > :id ORDER BY id LIMIT 1";
         $stmt = $this->databaseManager->connection->prepare($sql);
-        $stmt->execute(array(":id"=>$id));
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
         $next = $stmt->fetch(PDO::FETCH_ASSOC)['id'] ?? 'default';
         return $next;
         //require 'View/articles/show.php';
@@ -78,12 +81,29 @@ class ArticleController
         
             $sql = "SELECT id From articles WHERE id < :id ORDER BY id DESC limit 1";
             $stmt = $this->databaseManager->connection->prepare($sql);
-            $stmt->execute(array(":id"=>$id));
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
             $previous = $stmt->fetch(PDO::FETCH_ASSOC)['id'] ?? 'default';
 
     
             return $previous;    
         //require 'View/articles/show.php';
     }
+
+    public function showAuthor($author)
+{
+    $sql = "SELECT * FROM articles WHERE author = '{$author}'";
+    $stmt = $this->databaseManager->connection->prepare($sql);
+    $stmt->execute();
+    $articlesByAuthor = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $articles = [];
+        foreach ($articlesByAuthor as $rawArticle) {
+            // We are converting an article from a "dumb" array to a much more flexible class
+            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['id'], $rawArticle['img_url'], $rawArticle['author']);
+        }
+
+    require 'View/articles/author.php';
+}
 }
 
